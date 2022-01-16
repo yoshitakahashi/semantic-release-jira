@@ -15,13 +15,13 @@ Currently, it is only compatible with JIRA rest API v2 and login:password authen
 
 In `.releaserc`:
 
-```js
+```json
 {
   "verifyConditions": [
     "@semantic-release/github",
     "@semantic-release/npm",
     "semantic-release-jira"
-  ]
+  ],
   "success": [
     "@semantic-release/github",
     ["semantic-release-jira", {
@@ -30,27 +30,27 @@ In `.releaserc`:
         "userEnvVar": "JIRA_USER",
         "passEnvVar": "JIRA_PASS",
         "tokenEnvVar": "JIRA_TOKEN"
-      }
+      },
       "actions": [
         {
           "method": "POST",
           "url": "https://jira.example.com/rest/api/2/versions",
-          "body": '{ "name": "${version}", "archived": false, "released": true, "project": "${project}"}'
+          "body": "{ \"name\": \"${version}\", \"archived\": false, \"released\": true, \"project\": \"${project}\"}"
         },
         {
           "method": "PUT",
           "url": "https://jira.example.com/rest/api/2/issue/${issueKey}",
-          "body": '{"update":{"labels":[{"add":"some-component:${version}"}]}}'
+          "body": "{ \"update\": { \"labels\": [{\"add\": \"some-component: ${version}\"}]}}"
         },
         {
           "method": "PUT",
           "url": "https://jira.example.com/rest/api/2/issue/${issueKey}",
-          "body": '{"update":{"fixVersions":[{"add":{"name":"Some Component ${version}"}}]}}'
+          "body": "{ \"update\": { \"fixVersions\": [{\"add\": {\"name\": \"Some Component ${version}\"}}]}}"
         },
         {
           "method":"POST",
           "url": "https://jira.d2iq.com/rest/api/2/issue/${issueKey}/transitions",
-          "body": '{"transition":{"id":151}}'
+          "body": "{ \"transition\": { \"id\": 151}}"
         }
       ]
     }]
@@ -77,3 +77,23 @@ This step doesnt support any options.
 ### `success` step
 
 See example above.
+
+##### commitTrailerKeys
+
+By default, issue numbers will be extracted from a commit message based on following trailer keys:
+- `Update(s)` (ex. `Update: ISSUE-1234`)
+- `Resolve(s)` (ex. `Resolves ISSUE-1234`)
+- `Close(s)` (ex. `Close "ISSUE-1234"`)
+
+Use `commitTrailerKeys` to specify custom trailer keys to extract issue numbers. In this example,
+a trailer like `Your-Trailer-Key: ISSUE-1234` will be found.
+
+```
+{
+  "auth": { ... },
+  "commitTrailerKeys": ["Your-Trailer-Key"],
+  "actions": [ ... ]
+}
+```
+
+ 

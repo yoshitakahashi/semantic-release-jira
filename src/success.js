@@ -16,7 +16,7 @@ async function success(pluginConfig, context) {
     env,
     logger,
   } = context;
-  const { auth, actions } = pluginConfig;
+  const { auth, actions, commitTrailerKeys } = pluginConfig;
 
   const authHeader = getAuthHeader({ auth, env, logger });
   if (!authHeader) {
@@ -30,7 +30,7 @@ async function success(pluginConfig, context) {
 
   const issueKeys = commits.reduce((issueKeys, commit) => {
     const { body } = commit;
-    return issueKeys.concat(parseCommitBody(body));
+    return issueKeys.concat(parseCommitBody(body, commitTrailerKeys));
   }, []);
 
   const results = issueKeys.map((issueKey) =>

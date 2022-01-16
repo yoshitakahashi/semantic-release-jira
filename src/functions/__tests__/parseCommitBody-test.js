@@ -118,4 +118,24 @@ describe("parseCommitBody", () => {
       ).toEqual(["ISSUE-12345"]);
     });
   });
+
+  describe("specify trailer key(s) to match issues", () => {
+    it("returns correct match for single issue with a custom trailer key", () => {
+      expect(
+          parseCommitBody(
+              "lorem ipsum closes the door\nlorem\n\ncloses ISSUE-12345\nBar-Key: ISSUE-23456",
+              ['Bar-Key']
+          )
+      ).toEqual(["ISSUE-23456"]);
+    });
+
+    it("returns correct match for issues with multiple custom trailer keys", () => {
+      expect(
+          parseCommitBody(
+              "lorem ipsum closes the door\nlorem\n\nBar-Key ISSUE-12345\nFoo-Key: \"ISSUE-23456\"",
+              ['Bar-Key', 'Foo-Key']
+          )
+      ).toEqual(["ISSUE-12345", "ISSUE-23456"]);
+    });
+  });
 });
